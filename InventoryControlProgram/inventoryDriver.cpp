@@ -22,7 +22,61 @@ static bool endProgram;
 
 int main()
 {
-	DoublyLinkedList test;
+	DoublyLinkedList test(8);
+	data t1("hammer", 5, 19.99);
+	data t2("saw", 15, 22.50);
+	data t3("level", 12, 15.99);
+	data t4("nails", 45, 14.99);
+	data t5("tape measure", 45, 12.50);
+	data t6("ladder", 2, 215.39);
+	data t7("hammer", 5, 19.99);
+	data t8("saw", 15, 22.50);
+	data t9("level", 12, 15.99);
+
+	data found;
+
+	std::cout<<"is empty: "<< test.isEmpty() <<std::endl;
+	std::cout<<"is full: "<< test.isFull() <<std::endl;
+	test.addItem(3, t1);
+	test.addItem(2, t2);
+	std::cout << "qty: " << test.getQty() << std::endl;
+	test.displayKeys();
+	test.addItem(5, t3);
+	test.displayKeys();
+	test.findItem(4, found);
+	found.displayData();
+	test.addItem(1, t4);
+	test.addItem(6, t5);
+	std::cout << "qty: " << test.getQty() << std::endl;
+	test.displayKeys();
+	test.addItem(4, t6);
+	test.displayKeys();
+	test.addItem(4, t6);
+	test.displayKeys();
+	test.deleteItem(4);
+	test.findItem(6, found);
+	found.displayData();
+	test.displayKeys();
+	std::cout << "qty: " << test.getQty() << std::endl;
+	test.addItem(7, t7);
+	test.displayKeys();
+	test.addItem(8, t8);
+	test.displayKeys();
+	test.deleteItem(4);
+	test.findItem(1, found);
+	found.displayData();
+	test.displayKeys();
+	test.addItem(9, t9);
+	test.addItem(10, found);
+	std::cout<<"is empty: "<< test.isEmpty() <<std::endl;
+	std::cout<<"is full: "<< test.isFull() <<std::endl;
+	std::cout << "qty: " << test.getQty() << std::endl;
+	test.displayKeys();
+	test.makeEmpty();
+	std::cout << "qty: " << test.getQty() << std::endl;
+	test.displayKeys();
+
+
 
 
 	return 0;
