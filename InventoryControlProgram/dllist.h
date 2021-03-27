@@ -10,7 +10,7 @@ typedef struct Data
 	char   toolName[35];
 	int    quantity;
 	double cost;
-	/*
+
 	Data()
 	{
 		toolName;
@@ -24,7 +24,7 @@ typedef struct Data
 		quantity  = qty;
 		cost = _cost;
 	}
-	*/
+
 	void displayData()
 	{
 		printf("\ntool name: %s \nstock: %d \nBalance: %.2f\n",
@@ -259,7 +259,7 @@ inline bool DoublyLinkedList::findItem(int _key, data& _d)
 	else
 	{
 		std::cout << "in getItem else statement now"<<std::endl;
-		while (curr->next != head)
+		while (curr->next != NULL)
 		{
 			std::cout<< "key: "<< _key << " in while loop checking curr: "<< curr->key<<std::endl;
 			if (_key == curr->key)
