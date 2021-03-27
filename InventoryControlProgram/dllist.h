@@ -2,12 +2,37 @@
 #include <iostream>
 #include <ostream>
 
-typedef struct data
+
+
+
+typedef struct Data
 {
 	char   toolName[35];
 	int    quantity;
 	double cost;
-};
+	/*
+	Data()
+	{
+		toolName;
+		quantity = 0;
+		cost = 00.00;
+	}
+	Data(std::string tn, int qty, double _cost)
+	{
+		int len = tn.length();
+		tn.copy (toolName, tn.size()+1);
+		quantity  = qty;
+		cost = _cost;
+	}
+	*/
+	void displayData()
+	{
+		printf("\ntool name: %s \nstock: %d \nBalance: %.2f\n",
+		toolName,
+		quantity,
+		cost);
+	}
+}data;
 
 struct node
 {
@@ -16,6 +41,8 @@ struct node
 	node* next;
 	node* prev;
 };
+
+
 
 class DoublyLinkedList
 {
