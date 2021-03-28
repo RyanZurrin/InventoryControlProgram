@@ -7,16 +7,12 @@
 
 typedef struct Data
 {
-	char   toolName[35];
-	int    quantity;
-	double cost;
-
+	char   toolName[35] = "";
+	int    quantity = 0;
+	double cost = 0.00;
 	Data()
-	{
-		toolName;
-		quantity = 0;
-		cost = 00.00;
-	}
+	= default;
+
 	Data(std::string tn, int qty, double _cost)
 	{
 		tn.copy (toolName, tn.size()+1);
@@ -26,8 +22,11 @@ typedef struct Data
 
 	void displayData()
 	{
+		std::string str(toolName);
+
+
 		printf("\ntool name: %s \nstock: %d \nBalance: %.2f\n",
-		toolName,
+		str.c_str(),
 		quantity,
 		cost);
 	}
@@ -48,7 +47,7 @@ class DoublyLinkedList
 public:
 	DoublyLinkedList();
 	DoublyLinkedList(int maxSize);
-	bool addItem(int _key, data& _d);
+	bool addItem(std::string _key, data& _d);
 	bool deleteItem(int _key);
 	bool findItem(int _key, data& _d);
 	bool isEmpty()const;
@@ -91,8 +90,12 @@ inline DoublyLinkedList::DoublyLinkedList(int maxSize)
 }
 
 
-inline bool DoublyLinkedList::addItem(int _key, data& _d)
+inline bool DoublyLinkedList::addItem(std::string _key_, data& _d)
 {
+	std::stringstream ss(_key_);
+	int _key;
+	ss >> _key;
+	std::cout << "in add item, key val: "<< _key << std::endl;
 	node* temp;
 	if (isFull())
 	{
@@ -158,10 +161,7 @@ inline bool DoublyLinkedList::addItem(int _key, data& _d)
 			qty++;
 			return true;
 		}
-		if (curr->key > _key)
-		{
-			curr = head;
-		}
+		curr = head;
 		for (;curr->next != NULL; curr = curr->next)
 		{
 			if (curr->key == _key)//duplicate
@@ -187,6 +187,15 @@ inline bool DoublyLinkedList::addItem(int _key, data& _d)
 			temp->next = NULL;
 			curr->next = temp;
 			temp->prev = curr;
+			qty++;
+			return true;
+		}
+		if (curr->next == NULL && curr->key > _key)//adding node to end of list
+		{
+			std::cout << "adding node to one before end: "<<_key << std::endl;
+			temp->next = curr;
+			curr->prev->next = temp;
+			temp->prev = curr->prev;
 			qty++;
 			return true;
 		}
@@ -294,6 +303,7 @@ inline int DoublyLinkedList::getQty() const
 
 inline bool DoublyLinkedList::makeEmpty()
 {
+	std::cout << "In make empty now"<<std::endl;
 	node* temp;
 	if (isEmpty())
 	{
@@ -303,6 +313,7 @@ inline bool DoublyLinkedList::makeEmpty()
 	{
 		temp = head;
 		head = head->next;
+		std::cout << "deleting key: "<< temp->key<< std::endl;
 		delete temp;
 		qty--;
 	}
