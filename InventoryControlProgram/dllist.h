@@ -19,7 +19,6 @@ typedef struct Data
 	}
 	Data(std::string tn, int qty, double _cost)
 	{
-		int len = tn.length();
 		tn.copy (toolName, tn.size()+1);
 		quantity  = qty;
 		cost = _cost;
