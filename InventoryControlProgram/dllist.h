@@ -1,21 +1,43 @@
-#pragma once
 #include <iostream>
 #include <ostream>
-
+#include <sstream>
 
 
 
 typedef struct Data
 {
-	char   toolName[35] = "";
-	int    quantity = 0;
-	double cost = 0.00;
-	Data()
-	= default;
+	char   toolName[35];
+	int    quantity;
+	double cost;
+	Data(){
+		for (int i = 0; i < 35; i++)
+		{
+			toolName[i] = ' ';
+		}
+		quantity = 0;
+		cost = 0.00;
+	}
 
 	Data(std::string tn, int qty, double _cost)
 	{
-		tn.copy (toolName, tn.size()+1);
+		bool tnCopied = true;
+		do
+		{
+			if (tn.length() <=34)
+			{
+				tn.copy (toolName, tn.size()+1);
+			}
+			else
+			{
+				std::cout << "tool name is too long please enter a name "
+					      << "less then 35 characters in all\n>>";
+				std::cin >> tn;
+				tnCopied = false;
+			}
+		}
+		while (!tnCopied);
+
+
 		quantity  = qty;
 		cost = _cost;
 	}
