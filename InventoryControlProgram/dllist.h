@@ -1,3 +1,5 @@
+#ifndef DLLIST_H
+#define DLLIST_H
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -57,7 +59,7 @@ typedef struct Data
 		std::cout << "stock: " << quantity << std::endl;
 		std::cout << std::fixed;
 		std::cout << std::setprecision(2);
-		std::cout << "retail cost: " << cost<< std::endl;
+		std::cout << "retail cost: " << cost<< std::endl<<std::endl;
 
 	}
 }data;
@@ -89,7 +91,7 @@ public:
 	int getQty()const;
 	bool makeEmpty();
 	void displayAll()const;
-	void displayAll(std::ostream&);
+	void printToFile()const;
 	~DoublyLinkedList();
 
 
@@ -142,11 +144,11 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 	std::stringstream ss(_key_);
 	int _key;
 	ss >> _key;
-	std::cout << "in add item, key val: "<< _key << std::endl;
+	//std::cout << "in add item, key val: "<< _key << std::endl;
 	node* temp;
 	if (isFull())
 	{
-		std::cout << "cant add item list is full" << std::endl;
+		//std::cout << "cant add item list is full" << std::endl;
 		return false;
 	}
 	temp = new node;
@@ -154,7 +156,7 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 	temp->d = _d;
 	if(isEmpty())//first node being added to list
 	{
-		std::cout << "adding first node to list: "<< _key << std::endl;
+		//std::cout << "adding first node to list: "<< _key << std::endl;
 		temp->next = NULL;
 		temp->prev = NULL;
 		head = temp;
@@ -167,26 +169,27 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 	{
 		if (head->key == _key)//duplicate, don't add;
 		{
-			std::cout << "duplicate item didn't add: "<<_key<<std::endl;
+			//std::cout << "duplicate item didn't add: "<<_key<<std::endl;
 			return false;
 		}
 		else if (_key < head->key)//adding new first node
 		{
-			std::cout << "adding new node to beginning2: "<< _key<<std::endl;
+			//std::cout << "adding new node to beginning2: "<< _key<<std::endl;
 			temp->next = head;
 			head->prev = temp;
 			temp->prev = NULL;
 			head = temp;
+			curr = head;
 			qty++;
 			return true;
 		}
 		else//adding second node
 		{
-			std::cout << "adding second node to list: "<<_key<<std::endl;
+			//std::cout << "adding second node to list: "<<_key<<std::endl;
 			temp->prev = head;
 			head->next = temp;
 			temp->next = NULL;
-			curr = temp;
+			curr = head;
 			qty++;
 			return true;
 		}
@@ -195,16 +198,17 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 	{
 		if (head->key == _key)//duplicate
 		{
-			std::cout << "duplicate item didn't add: "<<_key<<std::endl;
+			//std::cout << "duplicate item didn't add: "<<_key<<std::endl;
 			return false;
 		}
 		if (head->key > _key)//adding new first node with list of many nodes
 		{
-			std::cout << "adding new node to beginning3+: "<< _key<<std::endl;
+			//std::cout << "adding new node to beginning3+: "<< _key<<std::endl;
 			temp->next = head;
 			temp->prev = NULL;
 			head->prev = temp;
 			head = temp;
+			curr = head;
 			qty++;
 			return true;
 		}
@@ -213,16 +217,17 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 		{
 			if (curr->key == _key)//duplicate
 			{
-				std::cout << "duplicate item didn't add: "<<_key<<std::endl;
+				//std::cout << "duplicate item didn't add: "<<_key<<std::endl;
 				return false;
 			}
 			if (curr->key > _key)//adding node to middle of list
 			{
-				std::cout << "adding node to middle of list: " <<_key << std::endl;
+				//std::cout << "adding node to middle of list: " <<_key << std::endl;
 				temp->next = curr;
 				temp->prev = curr->prev;
 				curr->prev->next = temp;
 				curr->prev = temp;
+				curr = head;
 				qty++;
 				return true;
 			}
@@ -230,104 +235,28 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 		}//end for loop
 		if (curr->next == NULL && curr->key < _key)//adding node to end of list
 		{
-			std::cout << "adding node to end of list: "<<_key << std::endl;
+			//std::cout << "adding node to end of list: "<<_key << std::endl;
 			temp->next = NULL;
 			curr->next = temp;
 			temp->prev = curr;
+			curr = head;
 			qty++;
 			return true;
 		}
 		if (curr->next == NULL && curr->key > _key)//adding node to end of list
 		{
-			std::cout << "adding node to one before end: "<<_key << std::endl;
+			//std::cout << "adding node to one before end: "<<_key << std::endl;
 			temp->next = curr;
 			curr->prev->next = temp;
 			temp->prev = curr->prev;
+			curr = head;
 			qty++;
 			return true;
 		}
 	}
-	std::cout << "something went wrong and no node added: "<<_key<<std::endl;
+	curr = head;
+	//std::cout << "something went wrong and no node added: "<<_key<<std::endl;
 	return false;
-	/*
-	 *
-	 *node* temp;
-	std::stringstream ss(_key_);
-	int _key;
-	ss >> _key;
-
-	if (qty == max)
-	{
-		return false;
-	}
-	if (isEmpty())
-	{
-		std::cout << "adding first node to list: "<< _key << std::endl;
-		temp = new node;
-		temp->key = _key;
-		temp->d = _d;
-		temp->next = NULL;
-		temp->prev = NULL;
-		head = temp;
-		curr = head;
-		qty++;
-		return true;
-
-
-	}
-	if (head->key > _key)
-	{
-		std::cout << "adding new node to beginning2: "<< _key<<std::endl;
-		temp = new node;
-		temp->key = _key;
-		temp->d = _d;
-		temp->next = head;
-		head->prev = temp;
-		temp->prev = NULL;
-		head = temp;
-		qty++;
-		return true;
-
-	}
-	else if (head->key <= _key)
-	{
-		for (node* scan = head; scan != NULL; scan = scan->next)
-		{
-
-			if (scan->next->key > _key)
-			{
-				temp = new node;
-				temp->key = _key;
-				temp->d = _d;
-				temp->next = scan;
-				temp->prev = scan->prev;
-				scan->prev->next = temp;
-				qty++;
-				return true;
-			}
-			if (scan->next == NULL)
-			{
-				temp = new node;
-				temp->key = _key;
-				temp->d = _d;
-				temp->next = NULL;
-				temp->prev = scan;
-				scan->next = temp;
-				qty++;
-				return true;
-			}
-		}
-	}
-	return false;
-
-	/*
-	 *
-	 *
-	 */
-
-
-
-
 
 }
 
@@ -336,7 +265,7 @@ inline bool DoublyLinkedList::deleteItem(int _key)
 	node* temp;
 	data junk;
 	if(isEmpty()) {
-		std::cout <<" list not initialized." << std::endl;
+		//std::cout <<" list not initialized." << std::endl;
 		return false;
 	}
 	bool found = findItem(_key, junk);
@@ -345,23 +274,24 @@ inline bool DoublyLinkedList::deleteItem(int _key)
 		temp = curr;
 		if (curr == head)
 		{
-			std::cout << "deleting start key"<<std::endl;
+			//std::cout << "deleting start key"<<std::endl;
 			head = head->next;
 			head->prev = NULL;
 			curr = head;
 		}
 		else if (curr->next == NULL)
 		{
-			std::cout << "deleting last key"<<std::endl;
+			//std::cout << "deleting last key"<<std::endl;
 			curr = curr->prev;
 			curr->next = NULL;
 		}
 		else
 		{
-			std::cout << "deleting middle key"<<std::endl;
+			//std::cout << "deleting middle key"<<std::endl;
 			curr->prev->next = curr->next;
 			curr->next->prev = curr->prev;
 		}
+		curr = head;
 		delete temp;
 		qty--;
 		return true;
@@ -374,41 +304,43 @@ inline bool DoublyLinkedList::findItem(int _key, data& _d)
 {
 	if (isEmpty())
 	{
-		std::cout << "in getItem and is empty list" << std::endl;
+		//std::cout << "in getItem and is empty list" << std::endl;
 		return false;
 	}
 	if (head->key == _key)
 	{
-		std::cout << "item found at start of list: "<<_key <<std::endl;
+		//std::cout << "item found at start of list: "<<_key <<std::endl;
 		_d = head->d;
+		curr = head;
 		return true;
 	}
 
 	curr = head->next;
 	if (curr->key == _key)
 	{
-		std::cout << "item found second slot: "<<_key<<std::endl;
+		//std::cout << "item found second slot: "<<_key<<std::endl;
 		_d = curr->d;
 		return true;
 	}
 	else
 	{
-		std::cout << "in getItem else statement now"<<std::endl;
+		//std::cout << "in getItem else statement now"<<std::endl;
 		while (curr != NULL)
 		{
-			std::cout<< "key: "<< _key << " in while loop checking curr: "<< curr->key<<std::endl;
+		//	std::cout<< "key: "<< _key << " in while loop checking curr: "<< curr->key<<std::endl;
 			if (_key == curr->key)
 			{
-				std::cout << "getItem found: " << _key << std::endl;
+			//	std::cout << "getItem found: " << _key << std::endl;
 				_d = curr->d;
-				std::cout << "curr at: "<< curr->key <<std::endl;
+			//	std::cout << "curr at: "<< curr->key <<std::endl;
 				return true;
 			}
 			curr = curr->next;
 		}
-		std::cout << "leaving getItem else statement now"<<std::endl;
+		//std::cout << "leaving getItem else statement now"<<std::endl;
 	}
-	std::cout << "in getItem and item was not found: "<< _key << std::endl;
+	//std::cout << "in getItem and item was not found: "<< _key << std::endl;
+	curr = head;
 	return false;
 
 }
@@ -430,7 +362,7 @@ inline int DoublyLinkedList::getQty() const
 
 inline bool DoublyLinkedList::makeEmpty()
 {
-	std::cout << "In make empty now"<<std::endl;
+	//std::cout << "In make empty now"<<std::endl;
 	node* temp;
 	if (isEmpty())
 	{
@@ -440,7 +372,7 @@ inline bool DoublyLinkedList::makeEmpty()
 	{
 		temp = head;
 		head = head->next;
-		std::cout << "deleting key: "<< temp->key<< std::endl;
+		//std::cout << "deleting key: "<< temp->key<< std::endl;
 		delete temp;
 		qty--;
 	}
@@ -449,37 +381,56 @@ inline bool DoublyLinkedList::makeEmpty()
 
 inline void DoublyLinkedList::displayAll() const
 {
+	int count = qty;
+
+	if (head != NULL)
+	{
+		node* printer = head;
+		std::cout << std::endl;
+		do {
+			std::cout << "key: " <<static_cast<int>(printer->key) << std::endl;
+			printer->d.displayData();
+			printer = printer->next;
+			count--;
+		} while (qty!= 0);
+	}
+	std::cout << std::endl;
+}
+
+inline void DoublyLinkedList::printToFile()const
+{
+	std::ofstream output;
 	node* printer;
 	int count = qty;
 
+	output.open("inventory1.txt");
+	if (!output)
+	{
+		std::cerr << "Error: file could not be opened" << std::endl;
+		exit(1);
+	}
 	if (head != NULL)
 	{
 		printer = head;
 		std::cout << std::endl;
 		do {
-			std::cout << std::fixed;
-			std::cout << "key: " <<static_cast<int>(printer->key) << std::endl;
-			printer->d.displayData();
-			std::cout << std::endl;
+			std::string tn = printer->d.toolName;
+			output << static_cast<int>(printer->key) << ";";
+			output << tn << ";";
+			output << printer->d.quantity << ";";
+			output << printer->d.cost << ";";
+			output << "\n";
 			printer = printer->next;
 			count--;
 		} while (count!=0);
+		output.close();
 	}
-	std::cout << std::endl;
-}
-
-inline void DoublyLinkedList::displayAll(std::ostream& out)
-{
 }
 
 inline DoublyLinkedList::~DoublyLinkedList()
 {
 	makeEmpty();
 }
-
-
-
-
 
 class SortedList
 {
@@ -728,3 +679,4 @@ inline SortedList::~SortedList()
 {
 	makeEmpty();
 }
+#endif // DLLIST_H
