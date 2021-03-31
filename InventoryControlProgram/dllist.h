@@ -1,8 +1,7 @@
 #include <iostream>
 #include <ostream>
 #include <sstream>
-
-
+#include <iomanip>
 
 typedef struct Data
 {
@@ -10,10 +9,12 @@ typedef struct Data
 	int    quantity;
 	double cost;
 	Data(){
+
 		for (int i = 0; i < 35; i++)
 		{
 			toolName[i] = ' ';
 		}
+
 		quantity = 0;
 		cost = 0.00;
 	}
@@ -21,11 +22,17 @@ typedef struct Data
 	Data(std::string tn, int qty, double _cost)
 	{
 		bool tnCopied = true;
+		for (int i = 0; i < 35; i++)
+		{
+			toolName[i] = ' ';
+		}
+
 		do
 		{
 			if (tn.length() <=34)
 			{
 				tn.copy (toolName, tn.size()+1);
+				tnCopied = true;
 			}
 			else
 			{
@@ -42,21 +49,22 @@ typedef struct Data
 		cost = _cost;
 	}
 
-	void displayData()
+	void displayData()const
 	{
-		std::string str(toolName);
+		const std::string str(toolName);
 
+		std::cout << "tool name: "<< str.c_str() << std::endl;
+		std::cout << "stock: " << quantity << std::endl;
+		std::cout << std::fixed;
+		std::cout << std::setprecision(2);
+		std::cout << "retail cost: " << cost<< std::endl;
 
-		printf("\ntool name: %s \nstock: %d \nBalance: %.2f\n",
-		str.c_str(),
-		quantity,
-		cost);
 	}
 }data;
 
 struct node
 {
-	int key;
+	double key;
 	data d;
 	node* next;
 	node* prev;
@@ -67,16 +75,20 @@ struct node
 class DoublyLinkedList
 {
 public:
+
 	DoublyLinkedList();
 	DoublyLinkedList(int maxSize);
-	bool addItem(std::string _key, data& _d);
+	node* getHead()const;
+	node* getCurr()const;
+	void setCurr(node* ptr);
+	bool addItem(const std::string& _key, data& _d);
 	bool deleteItem(int _key);
 	bool findItem(int _key, data& _d);
 	bool isEmpty()const;
 	bool isFull()const;
 	int getQty()const;
 	bool makeEmpty();
-	void displayKeys()const;
+	void displayAll()const;
 	void displayAll(std::ostream&);
 	~DoublyLinkedList();
 
@@ -87,8 +99,6 @@ private:
 	node* head;
 	node* curr;
 };
-
-
 
 inline DoublyLinkedList::DoublyLinkedList()
 {
@@ -111,9 +121,24 @@ inline DoublyLinkedList::DoublyLinkedList(int maxSize)
 	curr = NULL;
 }
 
-
-inline bool DoublyLinkedList::addItem(std::string _key_, data& _d)
+inline node * DoublyLinkedList::getHead()const
 {
+	return head;
+}
+
+inline node * DoublyLinkedList::getCurr()const
+{
+	return curr;
+}
+
+inline void DoublyLinkedList::setCurr(node* ptr)
+{
+	curr = ptr;
+}
+
+inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
+{
+
 	std::stringstream ss(_key_);
 	int _key;
 	ss >> _key;
@@ -224,6 +249,86 @@ inline bool DoublyLinkedList::addItem(std::string _key_, data& _d)
 	}
 	std::cout << "something went wrong and no node added: "<<_key<<std::endl;
 	return false;
+	/*
+	 *
+	 *node* temp;
+	std::stringstream ss(_key_);
+	int _key;
+	ss >> _key;
+
+	if (qty == max)
+	{
+		return false;
+	}
+	if (isEmpty())
+	{
+		std::cout << "adding first node to list: "<< _key << std::endl;
+		temp = new node;
+		temp->key = _key;
+		temp->d = _d;
+		temp->next = NULL;
+		temp->prev = NULL;
+		head = temp;
+		curr = head;
+		qty++;
+		return true;
+
+
+	}
+	if (head->key > _key)
+	{
+		std::cout << "adding new node to beginning2: "<< _key<<std::endl;
+		temp = new node;
+		temp->key = _key;
+		temp->d = _d;
+		temp->next = head;
+		head->prev = temp;
+		temp->prev = NULL;
+		head = temp;
+		qty++;
+		return true;
+
+	}
+	else if (head->key <= _key)
+	{
+		for (node* scan = head; scan != NULL; scan = scan->next)
+		{
+
+			if (scan->next->key > _key)
+			{
+				temp = new node;
+				temp->key = _key;
+				temp->d = _d;
+				temp->next = scan;
+				temp->prev = scan->prev;
+				scan->prev->next = temp;
+				qty++;
+				return true;
+			}
+			if (scan->next == NULL)
+			{
+				temp = new node;
+				temp->key = _key;
+				temp->d = _d;
+				temp->next = NULL;
+				temp->prev = scan;
+				scan->next = temp;
+				qty++;
+				return true;
+			}
+		}
+	}
+	return false;
+
+	/*
+	 *
+	 *
+	 */
+
+
+
+
+
 }
 
 inline bool DoublyLinkedList::deleteItem(int _key)
@@ -289,7 +394,7 @@ inline bool DoublyLinkedList::findItem(int _key, data& _d)
 	else
 	{
 		std::cout << "in getItem else statement now"<<std::endl;
-		while (curr->next != NULL)
+		while (curr != NULL)
 		{
 			std::cout<< "key: "<< _key << " in while loop checking curr: "<< curr->key<<std::endl;
 			if (_key == curr->key)
@@ -342,7 +447,7 @@ inline bool DoublyLinkedList::makeEmpty()
 	return true;
 }
 
-inline void DoublyLinkedList::displayKeys() const
+inline void DoublyLinkedList::displayAll() const
 {
 	node* printer;
 	int count = qty;
@@ -352,7 +457,10 @@ inline void DoublyLinkedList::displayKeys() const
 		printer = head;
 		std::cout << std::endl;
 		do {
-			std::cout << printer->key << "->";
+			std::cout << std::fixed;
+			std::cout << "key: " <<static_cast<int>(printer->key) << std::endl;
+			printer->d.displayData();
+			std::cout << std::endl;
 			printer = printer->next;
 			count--;
 		} while (count!=0);
@@ -365,6 +473,258 @@ inline void DoublyLinkedList::displayAll(std::ostream& out)
 }
 
 inline DoublyLinkedList::~DoublyLinkedList()
+{
+	makeEmpty();
+}
+
+
+
+
+
+class SortedList
+{
+public:
+	SortedList(); //Constructor
+
+	SortedList(int); //overloaded constructor
+
+	~SortedList(); //Destructor
+
+	void makeEmpty(); // empties the list
+
+	bool isFull()const; // checks if list is full
+
+	bool isEmpty()const; // checks if list is empty
+
+	int getLength()const; // returns the length of the list
+
+	bool find(double)const; // searches list for an item
+
+	bool add(double, data&); // adds an element to the list
+
+	bool deleteItem(double); // deletes an item from the list
+
+	void printList()const; //prints the elements in the list
+
+protected:
+	node* head_; //pointer to start of list
+	int qty_; // quantity of items in the list
+	int max_; // max elements list can be
+
+};
+inline SortedList::SortedList()
+{
+	head_ = NULL;
+	qty_ = 0;
+	max_ = INT_MAX;
+}
+
+/// <summary>
+/// Initializes a new instance of the <see cref="UnsortedList"/> class.
+/// </summary>
+/// <param name="max_Size">The maximum size.</param>
+inline SortedList::SortedList(int max_Size)
+{
+	head_ = NULL;
+	qty_ = 0;
+	max_ = max_Size;
+}
+
+/// <summary>
+/// Determines whether this instance is full.
+/// </summary>
+/// <returns>
+///   <c>true</c> if this instance is full; otherwise, <c>false</c>.
+/// </returns>
+inline bool SortedList::isFull()const
+{
+	if (qty_ == max_)
+	{
+		return true;
+	}
+	return false;
+}
+
+/// <summary>
+/// Determines whether this instance is empty.
+/// </summary>
+/// <returns>
+///   <c>true</c> if this instance is empty; otherwise, <c>false</c>.
+/// </returns>
+inline bool SortedList::isEmpty() const
+{
+	return (head_ == NULL);
+}
+
+/// <summary>
+///  Empties List and all items are unallocated
+/// </summary>
+inline void SortedList::makeEmpty()
+{
+	node* tempPtr;
+	while (head_ != NULL) {
+		tempPtr = head_;
+		head_ = head_->next;
+		delete tempPtr;
+	}
+	qty_ = 0;
+}
+
+/// <summary>
+/// Gets the length.
+/// </summary>
+/// <returns>the length of list</returns>
+inline int SortedList::getLength()const
+{
+	return qty_;
+}
+
+/// <summary>
+/// Finds the specified value.
+/// </summary>
+/// <param name="item">The value.</param>
+/// <returns>true if value is in list: else false</returns>
+inline bool SortedList::find(double item) const
+{
+	for (node* scan = head_; scan != NULL; scan = scan->next)
+	{
+		if (scan->key > item)
+		{
+			return false;
+		}
+		if (scan->key == item)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+/// <summary>
+/// Adds the specified value.
+/// </summary>
+/// <param name="item">The value.</param>
+/// <returns>true if item is added to list:
+/// else false with error message.</returns>
+inline bool SortedList::add(double item, data& _d)
+{
+	node* temp;
+
+	if (qty_ == max_)
+	{
+		return false;
+	}
+	if (isEmpty())
+	{
+		head_ = new node;
+		head_->key = item;
+		head_->d = _d;
+		head_->next = NULL;
+		qty_++;
+		return true;
+	}
+	if (head_->key > item)
+	{
+		temp = new node;
+		temp->key = item;
+		temp->d = _d;
+		temp->next = head_;
+		head_ = temp;
+		qty_++;
+		return true;
+	}
+	else if (head_->key <= item)
+	{
+		for (node* scan = head_; scan != NULL; scan = scan->next)
+		{
+
+			if ((scan->next == NULL) || (scan->next->key >= item))
+			{
+				temp = new node;
+				temp->key = item;
+				temp->d = _d;
+				temp->next = scan->next;
+				scan->next = temp;
+				qty_++;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/// <summary>
+/// Deletes the item.
+/// </summary>
+/// <param name="item">The item.</param>
+/// <returns>true if item is deleted: else false with error message</returns>
+inline bool SortedList::deleteItem(double item)
+{
+	node* temp;
+
+	if (isEmpty()) {
+		return false;
+	}
+
+	if (head_->key == item)
+	{
+		temp = head_;
+		head_ = head_->next;
+		delete temp;
+		qty_--;
+		return true;
+	}
+	for (node* scan = head_; scan->next != NULL; scan = scan->next)
+	{
+		if (scan->key > item)
+		{
+			return false;
+		}
+		if (scan->next->key == item)
+		{
+			// Unlink the node from linked list
+			temp = scan->next;
+			scan->next = temp->next;
+			// Free memory
+			delete temp;
+			qty_--;
+			return true;
+		}
+	}
+	return false;
+}
+
+/// <summary>
+/// Prints the list.
+/// </summary>
+inline void SortedList::printList()const
+{
+	{
+		node* temp;
+
+		if (head_ == NULL)     // Report no items in the list
+		{
+			std::cout << " List is currently empty.\n";
+		}
+		else
+		{
+			temp = head_;
+			std::cout << "qty: "<< qty_<<std::endl;
+			while (temp != NULL)
+			{
+				//std::cout << "cost: " << temp->key << "\n";
+				temp->d.displayData();
+				temp = temp->next;
+			}
+		}
+	}
+}
+
+/// <summary>
+/// Finalizes an instance of the <see cref="UnsortedList"/> class.
+/// </summary>
+/// Post: List is empty: all items have been unallocated
+inline SortedList::~SortedList()
 {
 	makeEmpty();
 }
