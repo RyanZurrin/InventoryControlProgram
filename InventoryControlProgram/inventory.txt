@@ -3,3 +3,8 @@
 134;Stainley #2 Phillips Screwdriver;28;2.95
 0123765;Dewalt Circular Saw;15;199.95
 9345;Miter Box;4;23.95
+512345;4foot level;80;29.99
+345678;8d Galvanized Nails;65000;0.10
+13;Stainley #2 flat Screwdriver;18;2.95
+9123765;Dewalt Table saw;15;399.95
+69345;Dust collection adapter;14;33.95
