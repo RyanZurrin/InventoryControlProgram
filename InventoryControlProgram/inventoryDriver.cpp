@@ -166,6 +166,7 @@ void validatePickLoop(DoublyLinkedList* dll)
 				}
 				if (dll->findItem(_key_, mod)==true)
 				{
+
 					displayModMenu();
 					validateModPickLoop(dll, mod, _key_);
 
@@ -227,7 +228,7 @@ void validatePickLoop(DoublyLinkedList* dll)
 				displayMenu();
 
 		}//end while loop
-		
+
 		exit(0);
 }//end method validatePickLoop
 
@@ -244,12 +245,10 @@ bool validateModPickLoop(DoublyLinkedList* dll, data _d, int _key)
 		char pick;
 		bool endMod = false;
 		int _key_ = _key;
-		int _stock = _d.quantity;
-		int id = _key;
-		double _cost = _d.cost;
+		int len;
 		data mod = _d;
 		std::string _tn, _k;
-
+		std::cout << "Modifying "<< mod.toolName;
 		while (!endMod)
 		{
 			std::cout << "\nEnter Modification Option\n>>";
@@ -272,10 +271,19 @@ bool validateModPickLoop(DoublyLinkedList* dll, data _d, int _key)
 				std::cout << "Enter the new name for part in inventory\n>>";
 				std::cin.ignore();
 				std::getline(std::cin, _tn, '\n');
+				len = _tn.length();
+				for (int i = 0; i< len; i++)
+				{
+					mod.toolName[i] = _tn[i];
+				}
+				mod.toolName[len] = '\0';
+				std::cout << "item "<< _d.toolName <<" changed to "
+						  << mod.toolName << std::endl;
 
 			}
 			else if (pick == 'b' || pick == 'B' || pick == '2')
 			{
+				std::cout << "editing inventory id " << _key << std::endl;
 				std::cout << "Enter new item Inventory number\n>>";
 				std::cin >> _key_;
 				while (!std::cin)
@@ -285,50 +293,50 @@ bool validateModPickLoop(DoublyLinkedList* dll, data _d, int _key)
 					std::cin.ignore(100, '\n');
 					std::cin >> _key_;
 				}
+				std::cout << "product inventory " << _key << " changed to "
+						  << _key_ << std::endl;
+
 			}
 			else if (pick == 'c' || pick == 'C' || pick == '3')
 			{
-				std::cout << "Enter the total items stock\n>>";
-				std::cin >> _stock;
-				while (!std::cin || _stock < 0)
+				std::cout << "editing stock supply of "<< mod.quantity
+						  <<std::endl;
+				std::cout << "Enter new amount in stock\n>>";
+				std::cin >> mod.quantity;
+				while (!std::cin || mod.quantity < 0)
 				{
 					std::cout << "please enter a valid stock amount\n>>";
 					std::cin.clear();
 					std::cin.ignore(100, '\n');
-					std::cin >> _stock;
+					std::cin >> mod.quantity;
 				}
+				std::cout << "product stock changed from "<<_d.quantity
+						  <<" to "<< mod.quantity;
 			}
 			else if (pick == 'd' || pick == 'D' || pick == '4')
 			{
+				std::cout << "editing item cost of " << mod.cost<< std::endl;
 				std::cout << "Enter new cost of item\n>>";
-				std::cin >> _cost;
-				while (!std::cin || _cost < 0)
+				std::cin >> mod.cost ;
+				while (!std::cin || mod.cost  < 0)
 				{
 					std::cout << "please enter a valid price\n>>";
 					std::cin.clear();
 					std::cin.ignore(100, '\n');
-					std::cin >> _cost;
+					std::cin >> mod.cost ;
 				}
+				std::cout << "product cost changed from " << _d.cost << " to "
+						  << mod.cost << std::endl;
 
 			}
 			else if (pick == 'e' || pick == 'E' || pick == '5')
 			{
-				dll->deleteItem(_key);
-				for (int i = 0; i < 35; i++)
-				{
-					mod.toolName[i] = ' ';
-				}
+				std::cout << "Item successfully updated in inventory"
+						  << std::endl;
 				std::ostringstream oss;
 				oss << _key_;
 				_k = oss.str();
-				int len = _tn.length();
-				for (int i = 0; i< len; i++)
-				{
-					mod.toolName[i] = _tn[i];
-				}
-				mod.toolName[len] = '\0';
-				mod.quantity = _stock;
-				mod.cost = _cost;
+				dll->deleteItem(_key);
 				dll->addItem(_k, mod);
 				endMod = true;
 			}

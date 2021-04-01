@@ -6,6 +6,6 @@
 67584;bedframe post;55;89.99;
 69345;Dust collection adapter;14;33.95;
 123765;Dewalt Circular Saw;15;199.95;
-345678;8d Galvanized Nails;65000;0.1;
+0345678;8d Galvanized Nails;65000;0.1;
 512345;4foot level;80;29.99;
 9123765;Dewalt Table saw;15;399.95;
