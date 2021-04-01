@@ -11,12 +11,6 @@ typedef struct Data
 	int    quantity;
 	double cost;
 	Data(){
-
-		for (int i = 0; i < 35; i++)
-		{
-			toolName[i] = ' ';
-		}
-
 		quantity = 0;
 		cost = 0.00;
 	}
@@ -24,10 +18,6 @@ typedef struct Data
 	Data(std::string tn, int qty, double _cost)
 	{
 		bool tnCopied = true;
-		for (int i = 0; i < 35; i++)
-		{
-			toolName[i] = ' ';
-		}
 
 		do
 		{
@@ -90,7 +80,7 @@ public:
 	bool isFull()const;
 	int getQty()const;
 	bool makeEmpty();
-	void displayAll()const;
+	void displayAll();
 	void printToFile()const;
 	~DoublyLinkedList();
 
@@ -362,37 +352,40 @@ inline int DoublyLinkedList::getQty() const
 
 inline bool DoublyLinkedList::makeEmpty()
 {
+
 	//std::cout << "In make empty now"<<std::endl;
 	node* temp;
 	if (isEmpty())
 	{
 		return false;
 	}
-	while (qty!=0)
+	while (head != NULL)
 	{
 		temp = head;
 		head = head->next;
 		//std::cout << "deleting key: "<< temp->key<< std::endl;
 		delete temp;
-		qty--;
+		//qty--;
 	}
+	qty = 0;
 	return true;
 }
 
-inline void DoublyLinkedList::displayAll() const
+inline void DoublyLinkedList::displayAll()
 {
 	int count = qty;
 
 	if (head != NULL)
 	{
-		node* printer = head;
+		//node* printer = head;
+		curr = head;
 		std::cout << std::endl;
 		do {
-			std::cout << "key: " <<static_cast<int>(printer->key) << std::endl;
-			printer->d.displayData();
-			printer = printer->next;
+			std::cout << "key: " <<static_cast<int>(curr->key) << std::endl;
+			curr->d.displayData();
+			curr = curr->next;
 			count--;
-		} while (qty!= 0);
+		} while (qty!= 0 && curr!=NULL);
 	}
 	std::cout << std::endl;
 }

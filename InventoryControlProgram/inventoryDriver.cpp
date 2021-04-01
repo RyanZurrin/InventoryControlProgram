@@ -180,9 +180,9 @@ void validatePickLoop(DoublyLinkedList* dll)
 					temp->setCurr(temp->getCurr()->next);
 				}
 				costPrint->printList();
-				//costPrint->makeEmpty();
-				//costPrint = NULL;
-				//temp = NULL;
+				costPrint->makeEmpty();
+				costPrint = NULL;
+				temp = NULL;
 				delete costPrint;
 				delete temp;
 				displayMenu();
