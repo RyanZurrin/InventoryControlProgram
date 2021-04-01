@@ -11,6 +11,7 @@ typedef struct Data
 	int    quantity;
 	double cost;
 	Data(){
+		toolName[0] = '\0';
 		quantity = 0;
 		cost = 0.00;
 	}
@@ -18,12 +19,17 @@ typedef struct Data
 	Data(std::string tn, int qty, double _cost)
 	{
 		bool tnCopied = true;
-
 		do
 		{
 			if (tn.length() <=34)
 			{
-				tn.copy (toolName, tn.size()+1);
+				int len = tn.length();
+				for (int i = 0; i< len; i++)
+				{
+					toolName[i] = tn[i];
+				}
+				toolName[len] = '\0';
+				//tn.copy (toolName, tn.size()+1);
 				tnCopied = true;
 			}
 			else
@@ -45,11 +51,13 @@ typedef struct Data
 	{
 		const std::string str(toolName);
 
-		std::cout << "tool name: "<< str.c_str() << std::endl;
-		std::cout << "stock: " << quantity << std::endl;
+		std::cout << "item: "<< std::left << std::setw(35) << str.c_str()
+				  << "  ";
+		std::cout << "stock: "<< std::left<< std::setw(6) << quantity << " ";
 		std::cout << std::fixed;
 		std::cout << std::setprecision(2);
-		std::cout << "retail cost: " << cost<< std::endl<<std::endl;
+		std::cout << std::left << std::setw(6) << "cost: "
+				  << std::right << std::setw(8)<< cost<< std::endl;
 
 	}
 }data;
@@ -381,13 +389,14 @@ inline void DoublyLinkedList::displayAll()
 		curr = head;
 		std::cout << std::endl;
 		do {
-			std::cout << "key: " <<static_cast<int>(curr->key) << std::endl;
+			std::cout << "key: "<< std::left << std::setw(9)
+					  << static_cast<int>(curr->key) << " ";
 			curr->d.displayData();
 			curr = curr->next;
 			count--;
 		} while (qty!= 0 && curr!=NULL);
 	}
-	std::cout << std::endl;
+	std::cout << "quantity: " << qty << std::endl << std::endl;
 }
 
 inline void DoublyLinkedList::printToFile()const
@@ -396,7 +405,7 @@ inline void DoublyLinkedList::printToFile()const
 	node* printer;
 	int count = qty;
 
-	output.open("inventory1.txt");
+	output.open("inventory.txt");
 	if (!output)
 	{
 		std::cerr << "Error: file could not be opened" << std::endl;
@@ -653,13 +662,14 @@ inline void SortedList::printList()const
 		else
 		{
 			temp = head_;
-			std::cout << "qty: "<< qty_<<std::endl;
+
 			while (temp != NULL)
 			{
 				//std::cout << "cost: " << temp->key << "\n";
 				temp->d.displayData();
 				temp = temp->next;
 			}
+			std::cout << "quantity: " << qty_ << std::endl << std::endl;
 		}
 	}
 }

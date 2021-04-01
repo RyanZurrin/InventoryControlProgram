@@ -28,6 +28,9 @@ int main()
 
 }//end main
 
+/// <summary>
+/// Displays the main menu.
+/// </summary>
 void displayMenu() {
 	std::cout << "a.)  Add new record" << std::endl;
 	std::cout << "b.)  Delete record" << std::endl;
@@ -37,6 +40,9 @@ void displayMenu() {
 	std::cout << "f.)  Quit and SAVE" << std::endl;
 }//end method displayMenu
 
+/// <summary>
+/// Displays the mod menu.
+/// </summary>
 void displayModMenu() {
 	std::cout << "a.)  Change name of item on record" << std::endl;
 	std::cout << "b.)  Change part number of record" << std::endl;
@@ -46,12 +52,14 @@ void displayModMenu() {
 }//end method displayMenu
 
 
+/// <summary>
+/// Validates the pick and stays in loop until user chooses to exit program.
+/// </summary>
+/// <param name="dll">The doubly linked list ADT that hold inventory
+/// records for viewing and updating.</param>
 void validatePickLoop(DoublyLinkedList* dll)
 {
-
 		char pick;
-
-
 		while (!endProgram)
 		{
 			std::cout << "\nEnter Menu Option\n>>";
@@ -70,7 +78,9 @@ void validatePickLoop(DoublyLinkedList* dll)
 				std::cin >> pick;
 			}
 
-
+			//allows the user to enter in a new item into the inventory. The
+			//user will be asked to enter each piece of needed data in order to
+			//make sure everything is properly added.
 			if (pick == 'a' || pick == 'A' || pick == '1') {
 				std::string _id;
 				std::string _tn;
@@ -114,24 +124,31 @@ void validatePickLoop(DoublyLinkedList* dll)
 				dll->addItem(_id, tool);
 				displayMenu();
 			}
+			//allows the user to specifiy a key record for deletion.
 			else if (pick == 'b' || pick == 'B' || pick == '2')
 			{
 				int _key_;
-				bool wasDeleted;
+				data toJunk;
 				std::cout << "delete record from inventory" << std::endl;
 				std::cout << "Enter record key to be deleted\n>>";
 				std::cin >> _key_;
-				wasDeleted = dll->deleteItem(_key_);
-				if (wasDeleted)
+				if (dll->findItem(_key_, toJunk))
 				{
-					std::cout << "item # " << _key_ << " has been removed\n";
+					std::cout << toJunk.toolName
+							  << " has been removed from inventory\n";
+					dll->deleteItem(_key_);
 				}
 				else
 				{
-					std::cout << "item # " << _key_ << " has not found\n";
+					std::cout << "item # " << _key_ << " was not found\n";
 				}
 				displayMenu();
 			}
+			//asks the user to enter a key and if key is found it takes user to
+			//the item modification menu where they are able to update each
+			//piece of data as needed and once the user chooses to exit and
+			//save from the modification menu the object will be updated and
+			//returned to main menu for further inventory operations.
 			else if (pick == 'c' || pick == 'C' || pick == '3')
 			{
 				int _key_;
@@ -153,22 +170,27 @@ void validatePickLoop(DoublyLinkedList* dll)
 					validateModPickLoop(dll, mod, _key_);
 
 				}
-				if (dll->findItem(_key_, mod) == false)
+				else if (dll->findItem(_key_, mod) == false)
 				{
 					std::cout << "Item not found in inventory\n";
 				}
 				displayMenu();
 
 			}
+			//displays the items from list by key value
 			else if (pick == 'd' || pick == 'D' || pick == '4')
 			{
 				std::cout << "list all items by inventory #" << std::endl;
 				dll->displayAll();
 				displayMenu();
 			}
+			//creates a sorted linked list object and stores the cost from
+			//the dll objects as its keys.It's been modified to hold doubles
+			//and have access to a data member as well, which is what allows
+			//for a list to be printed in order of the cost instead of by key.
 			else if (pick == 'e' || pick == 'E' || pick == '5')
 			{
-				int count = dll->getQty();
+				const int count = dll->getQty();
 				DoublyLinkedList* temp = new DoublyLinkedList;
 				temp = dll;
 				SortedList* costPrint = new SortedList;
@@ -176,8 +198,13 @@ void validatePickLoop(DoublyLinkedList* dll)
 				temp->setCurr(temp->getHead());
 				for (int i = 0; i< count; i++)
 				{
-					costPrint->add(temp->getCurr()->d.cost, temp->getCurr()->d);
-					temp->setCurr(temp->getCurr()->next);
+					if (temp!=NULL)
+					{
+						costPrint->add(
+							temp->getCurr()->d.cost, temp->getCurr()->d);
+						temp->setCurr(temp->getCurr()->next);
+					}
+
 				}
 				costPrint->printList();
 				costPrint->makeEmpty();
@@ -187,6 +214,9 @@ void validatePickLoop(DoublyLinkedList* dll)
 				delete temp;
 				displayMenu();
 			}
+			//sets endProgram to true breaking the loop and calls the printToFile
+			//method allowing the data from the list to be added to the file and
+			//saved.
 			else if (pick == 'f' || pick == 'F' || pick == '6')
 			{
 				std::cout << "Exiting program and saving file" << std::endl;
@@ -197,15 +227,20 @@ void validatePickLoop(DoublyLinkedList* dll)
 				displayMenu();
 
 		}//end while loop
+		
 		exit(0);
 }//end method validatePickLoop
 
-
-
-
+/// <summary>
+/// Validates the modification pick loop which is how the user is able to update
+/// the information on an item piece by piece
+/// </summary>
+/// <param name="dll">The DLL object pointer.</param>
+/// <param name="_d">The inventory data.</param>
+/// <param name="_key">The key that was picked for modification.</param>
+/// <returns>true of item updated: else false</returns>
 bool validateModPickLoop(DoublyLinkedList* dll, data _d, int _key)
 {
-
 		char pick;
 		bool endMod = false;
 		int _key_ = _key;
@@ -247,7 +282,7 @@ bool validateModPickLoop(DoublyLinkedList* dll, data _d, int _key)
 				{
 					std::cout << "please enter a valid inventory number\n>>";
 					std::cin.clear();
-					std::cin.ignore(100,'\n');
+					std::cin.ignore(100, '\n');
 					std::cin >> _key_;
 				}
 			}
@@ -259,7 +294,7 @@ bool validateModPickLoop(DoublyLinkedList* dll, data _d, int _key)
 				{
 					std::cout << "please enter a valid stock amount\n>>";
 					std::cin.clear();
-					std::cin.ignore(100,'\n');
+					std::cin.ignore(100, '\n');
 					std::cin >> _stock;
 				}
 			}
@@ -271,7 +306,7 @@ bool validateModPickLoop(DoublyLinkedList* dll, data _d, int _key)
 				{
 					std::cout << "please enter a valid price\n>>";
 					std::cin.clear();
-					std::cin.ignore(100,'\n');
+					std::cin.ignore(100, '\n');
 					std::cin >> _cost;
 				}
 
@@ -286,15 +321,22 @@ bool validateModPickLoop(DoublyLinkedList* dll, data _d, int _key)
 				std::ostringstream oss;
 				oss << _key_;
 				_k = oss.str();
-				_tn.copy(mod.toolName, _tn.size() + 1);
+				int len = _tn.length();
+				for (int i = 0; i< len; i++)
+				{
+					mod.toolName[i] = _tn[i];
+				}
+				mod.toolName[len] = '\0';
 				mod.quantity = _stock;
 				mod.cost = _cost;
 				dll->addItem(_k, mod);
 				endMod = true;
 			}
 			else
-				displayMenu();
-
+			{
+				std::cout << "Error: item not updated" << std::endl;
+				return false;
+			}
 		}//end while loop
 		return true;
 
@@ -353,7 +395,7 @@ void inventoryLoader(DoublyLinkedList* dll)
 		dll->addItem(tempKeyString, tempTool);
 	}
 
-	std::cout << "Lists have been successfully loaded." << std::endl;
+	std::cout << "Inventory has been successfully loaded." << std::endl;
 	inFile.close();
 }//end method listLoader
 
