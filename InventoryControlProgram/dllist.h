@@ -5,17 +5,25 @@
 #include <sstream>
 #include <iomanip>
 
+/// <summary>
+/// Static Data structure that is used within the nodes to build and hold
+/// inventory data. I know this is a public member and that I didnt need to
+/// build consturctors to set the members but I like having that option and I
+/// felt it was easier to accomplish with a constructor so I used them
+/// </summary>
 typedef struct Data
 {
 	char   toolName[35];
 	int    quantity;
 	double cost;
-	Data(){
+
+	Data(){//built a default constructor for it so I could easily make emoty
+		//data members
 		toolName[0] = '\0';
 		quantity = 0;
 		cost = 0.00;
 	}
-
+	//overloaded constructor to set the structs data members
 	Data(std::string tn, int qty, double _cost)
 	{
 		bool tnCopied = true;
@@ -29,7 +37,6 @@ typedef struct Data
 					toolName[i] = tn[i];
 				}
 				toolName[len] = '\0';
-				//tn.copy (toolName, tn.size()+1);
 				tnCopied = true;
 			}
 			else
@@ -46,7 +53,8 @@ typedef struct Data
 		quantity  = qty;
 		cost = _cost;
 	}
-
+	//a display function inside the member to make it faster and easier
+	//to print whole inventory items anyplace needed.
 	void displayData()const
 	{
 		const std::string str(toolName);
@@ -61,7 +69,13 @@ typedef struct Data
 
 	}
 }data;
+//end of Data structure
+//.............................................................................
 
+/// <summary>
+/// node for making list of inventory items, the node holds a data member in it
+/// allowing for building dynamic lists with the ability to quickly modify items
+/// </summary>
 struct node
 {
 	double key;
@@ -69,45 +83,133 @@ struct node
 	node* next;
 	node* prev;
 };
+//end of node structure
+//.............................................................................
 
-
-
+/// <summary>
+/// ADT for working with data and modifying the node members
+/// </summary>
 class DoublyLinkedList
 {
 public:
-
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DoublyLinkedList"/> class.
+	/// </summary>
 	DoublyLinkedList();
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DoublyLinkedList"/> class.
+	/// </summary>
+	/// <param name="maxSize">The maximum size.</param>
 	DoublyLinkedList(int maxSize);
+
+	/// <summary>
+	/// Gets the head pointer location.
+	/// </summary>
+	/// <returns></returns>
 	node* getHead()const;
+
+	/// <summary>
+	/// Gets the curr pointer location.
+	/// </summary>
+	/// <returns></returns>
 	node* getCurr()const;
+
+	/// <summary>
+	/// Sets the curr pointer to new location. *Handle with care!
+	/// </summary>
+	/// <param name="ptr">The PTR.</param>
 	void setCurr(node* ptr);
+
+	/// <summary>
+	/// Adds a new item to the list. I have decided to change the initial
+	/// argument to a string which was to help deal with leading 0 inventory
+	/// ID numbers that were changing to octal numbers.
+	/// </summary>
+	/// <param name="_key_">The key.</param>
+	/// <param name="_d">The data member to be added to the item node containing
+	/// the product inventory information.</param>
+	/// <returns>
+	/// <c>true</c> if this instance is added; otherwise, <c>false</c>.
+	/// </returns>
 	bool addItem(const std::string& _key, data& _d);
+
+	/// <summary>
+	/// Deletes the specified item from the list if it is there.
+	/// </summary>
+	/// <param name="_key">The key to be deleted.</param>
+	/// <returns>
+	/// <c>true</c> if this instance is deleted; otherwise, <c>false</c>.
+	/// </returns>
 	bool deleteItem(int _key);
+
+	/// <summary>
+	/// Finds the item.
+	/// </summary>
+	/// <param name="_key">The key.</param>
+	/// <param name="_d">The data member that gets info saved to it if the
+	/// item was found.</param>
+	/// <returns>
+	/// <c>true</c> if this instance is found; otherwise, <c>false</c>.
+	/// </returns>
 	bool findItem(int _key, data& _d);
+
+	/// <summary>
+	/// Determines whether this instance is empty.
+	/// </summary>
+	/// <returns>
+	///   <c>true</c> if this instance is empty; otherwise, <c>false</c>.
+	/// </returns>
 	bool isEmpty()const;
+
+	/// <summary>
+	/// Determines whether this instance is full.
+	/// </summary>
+	/// <returns>
+	///   <c>true</c> if this instance is full; otherwise, <c>false</c>.
+	/// </returns>
 	bool isFull()const;
+
+	/// <summary>
+	/// Gets the quantity of this instance of list.
+	/// </summary>
+	/// <returns>the list quantity</returns>
 	int getQty()const;
+
+	/// <summary>
+	/// Makes this instance of the list empty.
+	/// </summary>
+	/// <returns></returns>
 	bool makeEmpty();
+
+	/// <summary>
+	/// Displays all the data for each node in the list
+	/// </summary>
 	void displayAll();
+
+	/// <summary>
+	/// Prints all data contained in this instance to file.
+	/// </summary>
 	void printToFile()const;
+
+	/// <summary>
+	/// Finalizes an instance of the <see cref="DoublyLinkedList"/> class.
+	/// </summary>
 	~DoublyLinkedList();
-
-
 private:
 	int qty;
 	int max;
 	node* head;
 	node* curr;
-};
-
+};//end of DLL interface
+//start of DLL implementation
 inline DoublyLinkedList::DoublyLinkedList()
 {
 	qty = 0;
 	max = INT_MAX;
 	head = NULL;
 	curr = NULL;
-}
-
+}//end of no argument constructor
 inline DoublyLinkedList::DoublyLinkedList(int maxSize)
 {
 	qty = 0;
@@ -119,34 +221,28 @@ inline DoublyLinkedList::DoublyLinkedList(int maxSize)
 		max = INT_MAX;
 	head = NULL;
 	curr = NULL;
-}
-
+}//end of overloaded constructor
 inline node * DoublyLinkedList::getHead()const
 {
 	return head;
-}
-
+}//end of getHead
 inline node * DoublyLinkedList::getCurr()const
 {
 	return curr;
-}
-
+}//end of getCurr
 inline void DoublyLinkedList::setCurr(node* ptr)
 {
 	curr = ptr;
-}
-
+}//end of setCurr
 inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
-{
-
+{//I have intentions to refactor this method to make smaller and more efficient
+	//but running out of time and had to just leave for now
 	std::stringstream ss(_key_);
 	int _key;
 	ss >> _key;
-	//std::cout << "in add item, key val: "<< _key << std::endl;
 	node* temp;
 	if (isFull())
 	{
-		//std::cout << "cant add item list is full" << std::endl;
 		return false;
 	}
 	temp = new node;
@@ -154,7 +250,6 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 	temp->d = _d;
 	if(isEmpty())//first node being added to list
 	{
-		//std::cout << "adding first node to list: "<< _key << std::endl;
 		temp->next = NULL;
 		temp->prev = NULL;
 		head = temp;
@@ -167,12 +262,10 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 	{
 		if (head->key == _key)//duplicate, don't add;
 		{
-			//std::cout << "duplicate item didn't add: "<<_key<<std::endl;
 			return false;
 		}
 		else if (_key < head->key)//adding new first node
 		{
-			//std::cout << "adding new node to beginning2: "<< _key<<std::endl;
 			temp->next = head;
 			head->prev = temp;
 			temp->prev = NULL;
@@ -183,7 +276,6 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 		}
 		else//adding second node
 		{
-			//std::cout << "adding second node to list: "<<_key<<std::endl;
 			temp->prev = head;
 			head->next = temp;
 			temp->next = NULL;
@@ -196,12 +288,10 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 	{
 		if (head->key == _key)//duplicate
 		{
-			//std::cout << "duplicate item didn't add: "<<_key<<std::endl;
 			return false;
 		}
 		if (head->key > _key)//adding new first node with list of many nodes
 		{
-			//std::cout << "adding new node to beginning3+: "<< _key<<std::endl;
 			temp->next = head;
 			temp->prev = NULL;
 			head->prev = temp;
@@ -215,12 +305,10 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 		{
 			if (curr->key == _key)//duplicate
 			{
-				//std::cout << "duplicate item didn't add: "<<_key<<std::endl;
 				return false;
 			}
 			if (curr->key > _key)//adding node to middle of list
 			{
-				//std::cout << "adding node to middle of list: " <<_key << std::endl;
 				temp->next = curr;
 				temp->prev = curr->prev;
 				curr->prev->next = temp;
@@ -229,11 +317,9 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 				qty++;
 				return true;
 			}
-
 		}//end for loop
 		if (curr->next == NULL && curr->key < _key)//adding node to end of list
 		{
-			//std::cout << "adding node to end of list: "<<_key << std::endl;
 			temp->next = NULL;
 			curr->next = temp;
 			temp->prev = curr;
@@ -243,7 +329,6 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 		}
 		if (curr->next == NULL && curr->key > _key)//adding node to end of list
 		{
-			//std::cout << "adding node to one before end: "<<_key << std::endl;
 			temp->next = curr;
 			curr->prev->next = temp;
 			temp->prev = curr->prev;
@@ -253,17 +338,13 @@ inline bool DoublyLinkedList::addItem(const std::string& _key_, data& _d)
 		}
 	}
 	curr = head;
-	//std::cout << "something went wrong and no node added: "<<_key<<std::endl;
 	return false;
-
-}
-
+}//end of add item
 inline bool DoublyLinkedList::deleteItem(int _key)
 {
 	node* temp;
 	data junk;
 	if(isEmpty()) {
-		//std::cout <<" list not initialized." << std::endl;
 		return false;
 	}
 	bool found = findItem(_key, junk);
@@ -272,20 +353,17 @@ inline bool DoublyLinkedList::deleteItem(int _key)
 		temp = curr;
 		if (curr == head)
 		{
-			//std::cout << "deleting start key"<<std::endl;
 			head = head->next;
 			head->prev = NULL;
 			curr = head;
 		}
 		else if (curr->next == NULL)
 		{
-			//std::cout << "deleting last key"<<std::endl;
 			curr = curr->prev;
 			curr->next = NULL;
 		}
 		else
 		{
-			//std::cout << "deleting middle key"<<std::endl;
 			curr->prev->next = curr->next;
 			curr->next->prev = curr->prev;
 		}
@@ -296,18 +374,14 @@ inline bool DoublyLinkedList::deleteItem(int _key)
 	}//end if
 	return false; // not found
 }//end deleteItem
-
-
 inline bool DoublyLinkedList::findItem(int _key, data& _d)
 {
 	if (isEmpty())
 	{
-		//std::cout << "in getItem and is empty list" << std::endl;
 		return false;
 	}
 	if (head->key == _key)
 	{
-		//std::cout << "item found at start of list: "<<_key <<std::endl;
 		_d = head->d;
 		curr = head;
 		return true;
@@ -316,52 +390,39 @@ inline bool DoublyLinkedList::findItem(int _key, data& _d)
 	curr = head->next;
 	if (curr->key == _key)
 	{
-		//std::cout << "item found second slot: "<<_key<<std::endl;
 		_d = curr->d;
 		return true;
 	}
 	else
 	{
-		//std::cout << "in getItem else statement now"<<std::endl;
 		while (curr != NULL)
 		{
-		//	std::cout<< "key: "<< _key << " in while loop checking curr: "<< curr->key<<std::endl;
 			if (_key == curr->key)
 			{
-			//	std::cout << "getItem found: " << _key << std::endl;
 				_d = curr->d;
-			//	std::cout << "curr at: "<< curr->key <<std::endl;
 				return true;
 			}
 			curr = curr->next;
 		}
-		//std::cout << "leaving getItem else statement now"<<std::endl;
 	}
-	//std::cout << "in getItem and item was not found: "<< _key << std::endl;
 	curr = head;
 	return false;
 
-}
-
+}//end of findItem
 inline bool DoublyLinkedList::isEmpty() const
 {
 	return qty==0;
-}
-
+}//end of isEmpty
 inline bool DoublyLinkedList::isFull() const
 {
 	return qty>=max;
-}
-
+}//end of isFull
 inline int DoublyLinkedList::getQty() const
 {
 	return qty;
-}
-
+}//end of getQty
 inline bool DoublyLinkedList::makeEmpty()
 {
-
-	//std::cout << "In make empty now"<<std::endl;
 	node* temp;
 	if (isEmpty())
 	{
@@ -371,21 +432,17 @@ inline bool DoublyLinkedList::makeEmpty()
 	{
 		temp = head;
 		head = head->next;
-		//std::cout << "deleting key: "<< temp->key<< std::endl;
 		delete temp;
-		//qty--;
 	}
 	qty = 0;
 	return true;
 }
-
 inline void DoublyLinkedList::displayAll()
 {
 	int count = qty;
 
 	if (head != NULL)
 	{
-		//node* printer = head;
 		curr = head;
 		std::cout << std::endl;
 		do {
@@ -397,8 +454,7 @@ inline void DoublyLinkedList::displayAll()
 		} while (qty!= 0 && curr!=NULL);
 	}
 	std::cout << "quantity: " << qty << std::endl << std::endl;
-}
-
+}//end of displayAll
 inline void DoublyLinkedList::printToFile()const
 {
 	std::ofstream output;
@@ -427,37 +483,93 @@ inline void DoublyLinkedList::printToFile()const
 		} while (count!=0);
 		output.close();
 	}
-}
-
+}//end of printToFile
 inline DoublyLinkedList::~DoublyLinkedList()
 {
 	makeEmpty();
-}
+}//end of DoublyLinkedList destructor
+//End of Doubly linked list ADT
+//............................................................................
 
+/// <summary>
+/// Sorted List ADT that allows duplicates and is used to print the list in
+/// order of cost.
+/// </summary>
 class SortedList
 {
 public:
-	SortedList(); //Constructor
 
-	SortedList(int); //overloaded constructor
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SortedList"/> class.
+	/// </summary>
+	SortedList();
 
-	~SortedList(); //Destructor
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SortedList"/> class.
+	/// </summary>
+	/// <param name="max_Size">The maximum size.</param>
+	SortedList(int);
 
-	void makeEmpty(); // empties the list
+	/// <summary>
+	/// Determines whether this instance is full.
+	/// </summary>
+	/// <returns>
+	///   <c>true</c> if this instance is full; otherwise, <c>false</c>.
+	/// </returns>
+	bool isFull()const;
 
-	bool isFull()const; // checks if list is full
+	/// <summary>
+	/// Determines whether this instance is empty.
+	/// </summary>
+	/// <returns>
+	///   <c>true</c> if this instance is empty; otherwise, <c>false</c>.
+	/// </returns>
+	bool isEmpty()const;
 
-	bool isEmpty()const; // checks if list is empty
+	/// <summary>
+	///  Empties List and all items are unallocated
+	/// </summary>
+	void makeEmpty();
 
-	int getLength()const; // returns the length of the list
+	/// <summary>
+	/// Gets the length.
+	/// </summary>
+	/// <returns>the length of list</returns>
+	int getLength()const;
 
-	bool find(double)const; // searches list for an item
+	/// <summary>
+	/// Finds the specified value.
+	/// </summary>
+	/// <param name="item">The value.</param>
+	/// <returns>true if value is in list: else false</returns>
+	bool find(double)const;
 
-	bool add(double, data&); // adds an element to the list
+	/// <summary>
+	/// Adds the specified value.
+	/// </summary>
+	/// <param name="item">The value.</param>
+	/// <returns>true if item is added to list:
+	/// else false with error message.</returns>
+	bool add(double, data&);
 
-	bool deleteItem(double); // deletes an item from the list
+	/// <summary>
+	/// Deletes the item.
+	/// </summary>
+	/// <param name="item">The item.</param>
+	/// <returns>true if item is deleted: else false with error message</returns>
+	bool deleteItem(double);
 
+
+	/// <summary>
+	/// Prints the list.
+	/// </summary>
 	void printList()const; //prints the elements in the list
+
+	/// <summary>
+	/// Finalizes an instance of the <see cref="SortedList"/> class.
+	/// </summary>
+	/// Post: List is empty: all items have been unallocated
+	~SortedList();
 
 protected:
 	node* head_; //pointer to start of list
@@ -465,30 +577,19 @@ protected:
 	int max_; // max elements list can be
 
 };
+
 inline SortedList::SortedList()
 {
 	head_ = NULL;
 	qty_ = 0;
 	max_ = INT_MAX;
-}
-
-/// <summary>
-/// Initializes a new instance of the <see cref="UnsortedList"/> class.
-/// </summary>
-/// <param name="max_Size">The maximum size.</param>
+}//end of no argument constructor
 inline SortedList::SortedList(int max_Size)
 {
 	head_ = NULL;
 	qty_ = 0;
 	max_ = max_Size;
-}
-
-/// <summary>
-/// Determines whether this instance is full.
-/// </summary>
-/// <returns>
-///   <c>true</c> if this instance is full; otherwise, <c>false</c>.
-/// </returns>
+}//end of overloaded constructor
 inline bool SortedList::isFull()const
 {
 	if (qty_ == max_)
@@ -496,22 +597,11 @@ inline bool SortedList::isFull()const
 		return true;
 	}
 	return false;
-}
-
-/// <summary>
-/// Determines whether this instance is empty.
-/// </summary>
-/// <returns>
-///   <c>true</c> if this instance is empty; otherwise, <c>false</c>.
-/// </returns>
+}//end of isFull
 inline bool SortedList::isEmpty() const
 {
 	return (head_ == NULL);
-}
-
-/// <summary>
-///  Empties List and all items are unallocated
-/// </summary>
+}//end of isEmpty
 inline void SortedList::makeEmpty()
 {
 	node* tempPtr;
@@ -521,22 +611,11 @@ inline void SortedList::makeEmpty()
 		delete tempPtr;
 	}
 	qty_ = 0;
-}
-
-/// <summary>
-/// Gets the length.
-/// </summary>
-/// <returns>the length of list</returns>
+}//end of makeEmpty
 inline int SortedList::getLength()const
 {
 	return qty_;
-}
-
-/// <summary>
-/// Finds the specified value.
-/// </summary>
-/// <param name="item">The value.</param>
-/// <returns>true if value is in list: else false</returns>
+}//end of getLength
 inline bool SortedList::find(double item) const
 {
 	for (node* scan = head_; scan != NULL; scan = scan->next)
@@ -551,14 +630,7 @@ inline bool SortedList::find(double item) const
 		}
 	}
 	return false;
-}
-
-/// <summary>
-/// Adds the specified value.
-/// </summary>
-/// <param name="item">The value.</param>
-/// <returns>true if item is added to list:
-/// else false with error message.</returns>
+}//end of find
 inline bool SortedList::add(double item, data& _d)
 {
 	node* temp;
@@ -604,13 +676,7 @@ inline bool SortedList::add(double item, data& _d)
 		}
 	}
 	return false;
-}
-
-/// <summary>
-/// Deletes the item.
-/// </summary>
-/// <param name="item">The item.</param>
-/// <returns>true if item is deleted: else false with error message</returns>
+}//end of add
 inline bool SortedList::deleteItem(double item)
 {
 	node* temp;
@@ -645,11 +711,7 @@ inline bool SortedList::deleteItem(double item)
 		}
 	}
 	return false;
-}
-
-/// <summary>
-/// Prints the list.
-/// </summary>
+}//end of deleteItem
 inline void SortedList::printList()const
 {
 	{
@@ -672,14 +734,12 @@ inline void SortedList::printList()const
 			std::cout << "quantity: " << qty_ << std::endl << std::endl;
 		}
 	}
-}
-
-/// <summary>
-/// Finalizes an instance of the <see cref="UnsortedList"/> class.
-/// </summary>
-/// Post: List is empty: all items have been unallocated
+}//end of printList
 inline SortedList::~SortedList()
 {
 	makeEmpty();
-}
+}//end of SortedList destructor
+//end if Sorted List ADT
+//.............................................................................
+
 #endif // DLLIST_H
